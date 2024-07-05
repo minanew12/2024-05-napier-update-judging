@@ -9,16 +9,6 @@ The `claimWithdrawal` function has an incorrect check of `lastFinalizedRequestId
 ```solidity
 if (_requestId < ETHERFI_WITHDRAW_NFT.lastFinalizedRequestId()) revert RequestInQueue();
 ```
-
-## Vulnerability Detail
-Let's discuss how `WithdrawRequestNFT` handles withdrawal request IDs. When `requestWithdraw` is called, the `nextRequestId` is increased by one.
-```solidity
-uint256 requestId = nextRequestId++;
-```
-For a user to successfully call the `claimWithdraw` function, the admin of `WithdrawRequestNFT` must call `finalizeRequests` with our `requestId`:
-```solidity
-function finalizeRequests(uint256 requestId) external onlyAdmin {
-        lastFinalizedRequestId = uint32(requestId);
     }
 ```
 So, if a `requestId` is created and the admin finalizes our request id, then the user will be able to claim the withdrawal amount.
